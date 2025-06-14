@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stock Price Prediction - User Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Open+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'htmls/custom.css' %}">
+    <style>
+        :root {
+            --primary-color: #1e88e5;
+            --primary-dark: #1565c0;
+            --accent-color: #ffc107;
+            --text-light: #ffffff;
+            --bg-dark: #2c3e50;
+            --bg-light: #f5f7fa;
+            --transition: all 0.3s ease;
+            --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --box-shadow-lg: 0 8px 15px rgba(0, 0, 0, 0.15);
+            --border-radius: 8px;
+        }
+        
+        body {
+            background: linear-gradient(135deg, var(--bg-light) 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            font-family: 'Roboto', sans-serif;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .app-header {
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            padding: 15px 0;
+            box-shadow: var(--box-shadow);
+        }
+        
+        .app-header .header-title {
+            font-weight: 700;
+            font-size: 1.5rem;
+            margin: 0;
+        }
+        
+        .header-logo {
+            display: flex;
+            align-items: center;
+        }
+        
+        .header-logo i {
+            font-size: 1.8rem;
+            color: var(--primary-color);
+            margin-right: 10px;
+        }
+        
+        .navbar {
+            background-color: var(--primary-color);
+            box-shadow: var(--box-shadow);
+            padding: 0;
+        }
+        
+        .navbar-toggler {
+            margin: 8px;
+            border: none;
+            color: var(--text-light);
+        }
+        
+        .navbar-toggler:focus {
+            box-shadow: none;
+        }
+        
+        .nav-link {
+            color: var(--text-light) !important;
+            font-weight: 500;
+            padding: 15px 20px;
+            transition: var(--transition);
+            border-radius: 0;
+        }
+        
+        .nav-link:hover {
+            background-color: rgba(255,255,255,0.2);
+        }
+        
+        .nav-link.active {
+            background-color: rgba(255,255,255,0.3);
+            color: var(--accent-color) !important;
+        }
+        
+        .nav-link i {
+            font-size: 1.1rem;
+            margin-right: 5px;
+        }
+        
+        .user-greeting {
+            position: absolute;
+            right: 20px;
+            top: 15px;
+            display: flex;
+            align-items: center;
+            font-weight: 500;
+            color: var(--text-light);
+        }
+        
+        .user-avatar {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: var(--primary-dark);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+        }
+        
+        .user-avatar i {
+            font-size: 0.8rem;
+        }
+        
+        .content-area {
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .page-title {
+            color: var(--primary-dark);
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+            font-weight: 600;
+        }
+        
+        .footer {
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            padding: 30px 0;
+            margin-top: auto;
+        }
+        
+        .footer h5 {
+            color: var(--primary-color);
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+        
+        .footer p {
+            opacity: 0.8;
+        }
+        
+        .footer-links a {
+            color: var(--text-light);
+            text-decoration: none;
+            margin-left: 20px;
+            transition: var(--transition);
+            opacity: 0.8;
+        }
+        
+        .footer-links a:hover {
+            color: var(--primary-color);
+            opacity: 1;
+        }
+        
+        .footer-links i {
+            margin-right: 5px;
+        }
+        
+        .footer-bottom {
+            padding-top: 20px;
+            margin-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 0.9rem;
+            opacity: 0.6;
+        }
+        
+        .action-cards .card {
+            transition: var(--transition);
+            border: none;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            height: 100%;
+        }
+        
+        .action-cards .card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--box-shadow-lg);
+        }
+        
+        .action-cards .card-header {
+            background-color: var(--primary-color);
+            color: var(--text-light);
+            font-weight: 600;
+            border-radius: var(--border-radius) var(--border-radius) 0 0;
+        }
+        
+        .action-cards .card-body {
+            padding: 20px;
+        }
+        
+        .action-icon {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="app-header">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="header-logo">
+                    <i class="fas fa-chart-line"></i>
+                    <h1 class="header-title">Stock Price Prediction</h1>
+                </div>
+                <div>
+                    <span class="badge bg-success me-2">User Portal</span>
+                    <span><i class="fas fa-chart-area me-2"></i>Investor Sentiment Analysis</span>
+                </div>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container position-relative">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'Predict_Investor_Sentiment_Type' %}">
+                            <i class="fas fa-brain"></i> Predict Sentiment
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'ViewYourProfile' %}">
+                            <i class="fas fa-user"></i> My Profile
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            <i class="fas fa-history"></i> History
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            <i class="fas fa-chart-pie"></i> Analytics
+                        </a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'index' %}">
+                            <i class="fas fa-sign-out-alt"></i> Logout
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    
+    <div class="container mt-4 mb-5">
+        <div class="content-area">
+            {% block userblock %}
+            {% endblock %}
+        </div>
+    </div>
+    
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <h5>Stock Price Prediction</h5>
+                    <p>Our model analyzes investor sentiment to predict stock price movements with high accuracy.</p>
+                </div>
+                <div class="col-md-4">
+                    <h5>Quick Links</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="{% url 'Predict_Investor_Sentiment_Type' %}" class="text-white"><i class="fas fa-angle-right"></i> Predict Sentiment</a></li>
+                        <li><a href="{% url 'ViewYourProfile' %}" class="text-white"><i class="fas fa-angle-right"></i> My Profile</a></li>
+                        <li><a href="#" class="text-white"><i class="fas fa-angle-right"></i> Help Center</a></li>
+                        <li><a href="#" class="text-white"><i class="fas fa-angle-right"></i> FAQ</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <h5>Contact Us</h5>
+                    <p><i class="fas fa-envelope me-2"></i> support@stockprediction.com</p>
+                    <p><i class="fas fa-phone me-2"></i> (123) 456-7890</p>
+                    <div class="footer-links mt-3">
+                        <a href="{% url 'index' %}"><i class="fas fa-home"></i> Home</a>
+                        <a href="#"><i class="fas fa-question-circle"></i> Support</a>
+                        <a href="{% url 'index' %}"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                    </div>
+                </div>
+            </div>
+            <div class="row footer-bottom">
+                <div class="col-12 text-center">
+                    <p class="mb-0">© 2023 Stock Price Prediction System. All rights reserved.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        // Add active class to current nav item
+        $(document).ready(function() {
+            // Get current URL path
+            var path = window.location.pathname;
+            
+            // Find nav link that matches the path
+            $('.navbar .nav-link').each(function() {
+                var href = $(this).attr('href');
+                if (path.includes(href) && href !== '/' && href !== '/index/') {
+                    $(this).addClass('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

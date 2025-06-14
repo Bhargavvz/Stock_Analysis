@@ -1,0 +1,129 @@
+{% extends 'SProvider/Header.html' %}
+{% load static %}
+{% block researchblock %}
+
+<link rel="stylesheet" href="{% static 'htmls/custom.css' %}">
+<link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600,700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+<div class="container-fluid py-4">
+    <div class="content-area">
+        <div class="row">
+            <div class="col-md-12">
+                <h2 class="page-title">
+                    <i class="fas fa-chart-pie mr-2"></i>
+                    Investor Sentiment Analysis
+                </h2>
+                
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h3 class="m-0">Investor Sentiment Prediction Results</h3>
+                        <div class="d-flex">
+                            <div class="mr-2">
+                                <select class="form-control form-control-sm" id="filterPrediction">
+                                    <option value="">All Predictions</option>
+                                    <option value="Positive">Positive</option>
+                                    <option value="Negative">Negative</option>
+                                    <option value="Neutral">Neutral</option>
+                                </select>
+                            </div>
+                            <input type="text" class="form-control form-control-sm" placeholder="Search..." id="searchInput">
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="data-table table table-striped table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Investor Age</th>
+                                        <th>Gender</th>
+                                        <th>Date</th>
+                                        <th>Stock Text</th>
+                                        <th>Stock Name</th>
+                                        <th>Company Name</th>
+                                        <th>Prediction</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for object in list_objects %}
+                                    <tr>
+                                        <td>{{object.Investor_Age}}</td>
+                                        <td>{{object.Investor_Gender}}</td>
+                                        <td>{{object.PDate}}</td>
+                                        <td>
+                                            <span class="text-truncate d-inline-block" style="max-width: 150px;" title="{{object.Stock_Text}}">
+                                                {{object.Stock_Text}}
+                                            </span>
+                                        </td>
+                                        <td>{{object.Stock_Name}}</td>
+                                        <td>{{object.Company_Name}}</td>
+                                        <td>
+                                            {% if object.Prediction == 'Positive' %}
+                                                <span class="badge badge-success">{{object.Prediction}}</span>
+                                            {% elif object.Prediction == 'Negative' %}
+                                                <span class="badge badge-danger">{{object.Prediction}}</span>
+                                            {% else %}
+                                                <span class="badge badge-info">{{object.Prediction}}</span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <div class="mt-4 d-flex justify-content-between">
+                            <div>
+                                <span class="text-muted">Showing {{list_objects|length}} predictions</span>
+                            </div>
+                            <div>
+                                <a href="#" class="btn btn-primary">
+                                    <i class="fas fa-file-export mr-2"></i>
+                                    Export Data
+                                </a>
+                                <a href="#" class="btn btn-secondary ml-2">
+                                    <i class="fas fa-chart-line mr-2"></i>
+                                    View Analytics
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Simple search functionality
+    document.getElementById('searchInput').addEventListener('keyup', function() {
+        filterTable();
+    });
+    
+    document.getElementById('filterPrediction').addEventListener('change', function() {
+        filterTable();
+    });
+    
+    function filterTable() {
+        const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+        const predictionFilter = document.getElementById('filterPrediction').value;
+        const rows = document.querySelectorAll('.data-table tbody tr');
+        
+        rows.forEach(row => {
+            const text = row.textContent.toLowerCase();
+            const predictionCell = row.querySelector('td:nth-child(7)').textContent;
+            
+            const matchesSearch = text.includes(searchTerm);
+            const matchesPrediction = predictionFilter === '' || predictionCell.includes(predictionFilter);
+            
+            if(matchesSearch && matchesPrediction) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    }
+</script>
+
+{% endblock %}

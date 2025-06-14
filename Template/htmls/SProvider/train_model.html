@@ -1,0 +1,61 @@
+{% extends 'SProvider/Header.html' %}
+{% load static %}
+{% block researchblock %}
+
+<link rel="stylesheet" href="{% static 'htmls/custom.css' %}">
+<link rel="icon" href="{% static 'images/icon.png' %}" type="image/x-icon" />
+<link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600,700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+<div class="container-fluid py-4">
+    <div class="content-area">
+        <div class="row">
+            <div class="col-md-12">
+                <h2 class="page-title">
+                    <i class="fas fa-chart-line mr-2"></i>
+                    Model Training Results
+                </h2>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="m-0">Datasets Trained and Tested Results</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="data-table table table-striped table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Model Type</th>
+                                        <th>Accuracy</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for object in objs %}
+                                    <tr>
+                                        <td>{{object.names}}</td>
+                                        <td class="text-success font-weight-bold">{{object.ratio}}%</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <div class="mt-4 text-center">
+                            <a href="#" class="btn btn-primary">
+                                <i class="fas fa-sync-alt mr-2"></i>
+                                Retrain Models
+                            </a>
+                            <a href="#" class="btn btn-secondary ml-2">
+                                <i class="fas fa-file-export mr-2"></i>
+                                Export Results
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

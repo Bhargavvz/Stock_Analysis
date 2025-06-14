@@ -1,0 +1,170 @@
+{% extends 'SProvider/Header.html' %}
+{% load static %}
+{% block researchblock %}
+
+<link rel="stylesheet" href="{% static 'htmls/custom.css' %}">
+<link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600,700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+<div class="container-fluid py-4">
+    <div class="content-area">
+        <div class="row">
+            <div class="col-md-12">
+                <h2 class="page-title">
+                    <i class="fas fa-chart-bar mr-2"></i>
+                    Data Visualization
+                </h2>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <ul class="nav nav-tabs card-header-tabs">
+                            <li class="nav-item">
+                                <a class="nav-link {% if chart_type == 'pie' %}active{% endif %}" href="{% url 'charts' 'pie' %}">
+                                    <i class="fas fa-chart-pie mr-1"></i> Pie Chart
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link {% if chart_type == 'line' %}active{% endif %}" href="{% url 'charts' 'line' %}">
+                                    <i class="fas fa-chart-line mr-1"></i> Line Chart
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link {% if chart_type == 'spline' %}active{% endif %}" href="{% url 'charts' 'spline' %}">
+                                    <i class="fas fa-chart-area mr-1"></i> Spline Chart
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link {% if chart_type == 'bar' %}active{% endif %}" href="{% url 'charts' 'bar' %}">
+                                    <i class="fas fa-chart-bar mr-1"></i> Bar Chart
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-9">
+                                <div id="chartContainer" style="height: 400px; width: 100%;"></div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5 class="m-0">Data Summary</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <ul class="list-group">
+                                            {% for o in form %}
+                                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                {{o.names}}
+                                                <span class="badge badge-primary badge-pill">{{o.dcount}}%</span>
+                                            </li>
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                </div>
+                                
+                                <div class="mt-3">
+                                    <a href="#" class="btn btn-primary btn-block">
+                                        <i class="fas fa-file-export mr-2"></i>
+                                        Export Chart
+                                    </a>
+                                    <a href="#" class="btn btn-secondary btn-block mt-2">
+                                        <i class="fas fa-print mr-2"></i>
+                                        Print Report
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Template values rendered to be used by JS -->
+<script id="chart-data" type="application/json">
+{
+    "chartType": "{{ chart_type }}",
+    "chartTitle": "{{ chart_type|title }} Chart Analysis",
+    "dataPoints": [
+        {% for o in form %}
+            {
+                "y": {{o.dcount}},
+                "label": "{{o.names}}"
+            }{% if not forloop.last %},{% endif %}
+        {% endfor %}
+    ]
+}
+</script>
+
+<script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+<script>
+window.onload = function() {
+    // Parse the data from template
+    var chartData = JSON.parse(document.getElementById('chart-data').textContent);
+    var chartType = chartData.chartType;
+    var chartTitle = chartData.chartTitle;
+    var dataPoints = chartData.dataPoints;
+    
+    var chartConfig = {
+        animationEnabled: true,
+        theme: "light2",
+        title: {
+            text: chartTitle,
+            fontFamily: "Roboto",
+            fontSize: 24
+        },
+        axisY: {
+            title: "Percentage",
+            suffix: "%",
+            gridColor: "#f5f5f5"
+        },
+        toolTip: {
+            shared: true,
+            content: "{label}: {y}%"
+        },
+        legend: {
+            cursor: "pointer",
+            itemclick: toggleDataSeries
+        },
+        data: [{
+            dataPoints: dataPoints,
+            yValueFormatString: "#,##0.00\"%\"",
+            indexLabel: "{label} {y}%"
+        }]
+    };
+    
+    // Set chart type and specific properties based on chart type
+    if (chartType === "line") {
+        chartConfig.data[0].type = "line";
+        chartConfig.data[0].lineThickness = 3;
+    } else if (chartType === "pie") {
+        chartConfig.data[0].type = "pie";
+        chartConfig.data[0].showInLegend = true;
+        chartConfig.data[0].indexLabelFontSize = 14;
+        chartConfig.data[0].radius = "90%";
+        chartConfig.data[0].startAngle = 240;
+    } else if (chartType === "spline") {
+        chartConfig.data[0].type = "spline";
+        chartConfig.data[0].lineThickness = 3;
+    } else if (chartType === "bar") {
+        chartConfig.data[0].type = "column";
+    } else {
+        chartConfig.data[0].type = "line";
+    }
+    
+    var chart = new CanvasJS.Chart("chartContainer", chartConfig);
+    chart.render();
+    
+    function toggleDataSeries(e) {
+        if (typeof(e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
+            e.dataSeries.visible = false;
+        } else {
+            e.dataSeries.visible = true;
+        }
+        chart.render();
+    }
+}
+</script>
+{% endblock %}

@@ -1,0 +1,165 @@
+{% extends 'SProvider/Header.html' %}
+{% load static %}
+{% block researchblock %}
+
+<link rel="stylesheet" href="{% static 'htmls/custom.css' %}">
+<link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600,700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+<div class="container-fluid py-4">
+    <div class="content-area">
+        <div class="row">
+            <div class="col-md-12">
+                <h2 class="page-title">
+                    <i class="fas fa-percentage mr-2"></i>
+                    Sentiment Analysis Metrics
+                </h2>
+                
+                <div class="row">
+                    <div class="col-md-8">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="m-0">Investor Sentiment Prediction Type Ratio</h3>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="data-table table table-striped table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>Sentiment Prediction Type</th>
+                                                <th>Ratio</th>
+                                                <th>Visualization</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for object in objs %}
+                                            <tr>
+                                                <td>
+                                                    {% if object.names == 'Positive' %}
+                                                        <span class="text-success"><i class="fas fa-arrow-up mr-1"></i> {{object.names}}</span>
+                                                    {% elif object.names == 'Negative' %}
+                                                        <span class="text-danger"><i class="fas fa-arrow-down mr-1"></i> {{object.names}}</span>
+                                                    {% else %}
+                                                        <span class="text-info"><i class="fas fa-minus mr-1"></i> {{object.names}}</span>
+                                                    {% endif %}
+                                                </td>
+                                                <td class="font-weight-bold">{{object.ratio}}%</td>
+                                                <td>
+                                                    <div class="progress" style="height: 20px;">
+                                                        {% if object.names == 'Positive' %}
+                                                            <div class="progress-bar bg-success" role="progressbar" style="width: {{object.ratio}}%;" aria-valuenow="{{object.ratio}}" aria-valuemin="0" aria-valuemax="100">{{object.ratio}}%</div>
+                                                        {% elif object.names == 'Negative' %}
+                                                            <div class="progress-bar bg-danger" role="progressbar" style="width: {{object.ratio}}%;" aria-valuenow="{{object.ratio}}" aria-valuemin="0" aria-valuemax="100">{{object.ratio}}%</div>
+                                                        {% else %}
+                                                            <div class="progress-bar bg-info" role="progressbar" style="width: {{object.ratio}}%;" aria-valuenow="{{object.ratio}}" aria-valuemin="0" aria-valuemax="100">{{object.ratio}}%</div>
+                                                        {% endif %}
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                                
+                                <div class="mt-4 d-flex justify-content-between">
+                                    <div>
+                                        <span class="text-muted">Showing {{objs|length}} sentiment types</span>
+                                    </div>
+                                    <div>
+                                        <a href="#" class="btn btn-primary">
+                                            <i class="fas fa-file-export mr-2"></i>
+                                            Export Data
+                                        </a>
+                                        <a href="{% url 'charts' 'pie' %}" class="btn btn-secondary ml-2">
+                                            <i class="fas fa-chart-pie mr-2"></i>
+                                            View as Chart
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="m-0">Summary</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="text-center mb-4">
+                                    <div id="sentiment-donut" style="height: 220px;"></div>
+                                </div>
+                                
+                                <div class="mt-3">
+                                    <h6 class="font-weight-bold">Key Findings</h6>
+                                    <ul class="list-unstyled">
+                                        {% for object in objs %}
+                                            <li class="mb-2">
+                                                <i class="fas fa-circle 
+                                                    {% if object.names == 'Positive' %}text-success
+                                                    {% elif object.names == 'Negative' %}text-danger
+                                                    {% else %}text-info{% endif %} mr-2"></i>
+                                                <strong>{{object.names}}:</strong> {{object.ratio}}% of total predictions
+                                            </li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="card mt-4">
+                            <div class="card-header">
+                                <h5 class="m-0">Actions</h5>
+                            </div>
+                            <div class="card-body">
+                                <a href="#" class="btn btn-outline-primary btn-block mb-2">
+                                    <i class="fas fa-file-pdf mr-2"></i>
+                                    Generate Report
+                                </a>
+                                <a href="#" class="btn btn-outline-secondary btn-block">
+                                    <i class="fas fa-envelope mr-2"></i>
+                                    Share Results
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+<script>
+window.onload = function() {
+    var chart = new CanvasJS.Chart("sentiment-donut", {
+        animationEnabled: true,
+        theme: "light2",
+        legend: {
+            fontSize: 13
+        },
+        data: [{
+            type: "doughnut",
+            showInLegend: false,
+            toolTipContent: "{label}: {y}%",
+            indexLabel: "{label} - {y}%",
+            indexLabelFontSize: 12,
+            dataPoints: [
+                {% for object in objs %}
+                {
+                    y: {{object.ratio}},
+                    label: "{{object.names}}",
+                    color: {% if object.names == 'Positive' %}"#4caf50"
+                          {% elif object.names == 'Negative' %}"#f44336"
+                          {% else %}"#2196f3"{% endif %}
+                }{% if not forloop.last %},{% endif %}
+                {% endfor %}
+            ]
+        }]
+    });
+    chart.render();
+}
+</script>
+
+{% endblock %}

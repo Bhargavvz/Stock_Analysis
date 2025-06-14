@@ -1,0 +1,310 @@
+{% extends 'RUser/Header.html' %}
+{% block userblock %}
+
+<style>
+    .prediction-container {
+        background-color: white;
+        border-radius: var(--border-radius);
+        box-shadow: var(--box-shadow);
+        overflow: hidden;
+        margin-bottom: 30px;
+    }
+    
+    .prediction-header {
+        background: linear-gradient(to right, var(--primary-color), var(--primary-dark));
+        color: var(--text-light);
+        padding: 30px;
+        text-align: center;
+        position: relative;
+    }
+    
+    .prediction-header::after {
+        content: '';
+        position: absolute;
+        bottom: -10px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80px;
+        height: 4px;
+        background-color: var(--accent-color);
+        border-radius: 2px;
+    }
+    
+    .prediction-icon {
+        font-size: 3rem;
+        color: var(--accent-color);
+        margin-bottom: 15px;
+    }
+    
+    .prediction-title {
+        font-weight: 700;
+        margin-bottom: 10px;
+        font-size: 1.8rem;
+    }
+    
+    .prediction-subtitle {
+        opacity: 0.8;
+        font-size: 1.1rem;
+        margin-bottom: 0;
+    }
+    
+    .prediction-body {
+        padding: 40px 30px;
+    }
+    
+    .form-label {
+        font-weight: 500;
+        color: var(--bg-dark);
+        margin-bottom: 8px;
+    }
+    
+    .form-control, .form-select {
+        padding: 12px 15px;
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        border-radius: var(--border-radius);
+        transition: var(--transition);
+    }
+    
+    .form-control:focus, .form-select:focus {
+        box-shadow: 0 0 0 3px rgba(30, 136, 229, 0.25);
+        border-color: var(--primary-color);
+    }
+    
+    textarea.form-control {
+        min-height: 120px;
+        resize: vertical;
+    }
+    
+    .predict-btn {
+        background: linear-gradient(to right, var(--primary-color), var(--primary-dark));
+        color: var(--text-light);
+        border: none;
+        border-radius: 30px;
+        padding: 12px 30px;
+        font-weight: 600;
+        font-size: 1.1rem;
+        transition: var(--transition);
+        box-shadow: 0 4px 10px rgba(21, 101, 192, 0.3);
+    }
+    
+    .predict-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba(21, 101, 192, 0.4);
+    }
+    
+    .predict-btn i {
+        margin-right: 8px;
+    }
+    
+    .result-section {
+        margin-top: 40px;
+        padding-top: 30px;
+        border-top: 1px dashed rgba(0, 0, 0, 0.1);
+    }
+    
+    .result-section-title {
+        color: var(--primary-dark);
+        font-weight: 600;
+        margin-bottom: 20px;
+        text-align: center;
+    }
+    
+    .result-card {
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        border-radius: var(--border-radius);
+        padding: 25px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        box-shadow: var(--box-shadow);
+        transition: var(--transition);
+    }
+    
+    .result-card:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--box-shadow-lg);
+    }
+    
+    .result-label {
+        font-size: 1.1rem;
+        color: var(--bg-dark);
+        margin-bottom: 15px;
+        font-weight: 500;
+    }
+    
+    .result-value {
+        font-size: 2.2rem;
+        font-weight: 700;
+        color: var(--primary-dark);
+        text-transform: uppercase;
+    }
+    
+    .result-icon {
+        width: 80px;
+        height: 80px;
+        background-color: var(--primary-color);
+        color: var(--text-light);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 20px;
+        font-size: 2.5rem;
+    }
+    
+    .tooltip-icon {
+        color: var(--primary-color);
+        font-size: 1.1rem;
+        margin-left: 5px;
+        cursor: pointer;
+    }
+    
+    .field-help {
+        background-color: rgba(30, 136, 229, 0.1);
+        border-radius: var(--border-radius);
+        padding: 10px 15px;
+        font-size: 0.9rem;
+        color: var(--primary-dark);
+        margin-top: 5px;
+    }
+    
+    .field-help i {
+        color: var(--primary-color);
+        margin-right: 5px;
+    }
+    
+    @media (max-width: 768px) {
+        .prediction-body {
+            padding: 30px 20px;
+        }
+    }
+</style>
+
+<div class="row">
+    <div class="col-12">
+        <h4 class="page-title">Predict Investor Sentiment</h4>
+    </div>
+</div>
+
+<div class="prediction-container">
+    <div class="prediction-header">
+        <div class="prediction-icon">
+            <i class="fas fa-brain"></i>
+        </div>
+        <h2 class="prediction-title">Investor Sentiment Analysis</h2>
+        <p class="prediction-subtitle">Use our advanced model to predict stock sentiment</p>
+    </div>
+    
+    <div class="prediction-body">
+        <form role="form" method="POST">
+            {% csrf_token %}
+            
+            <div class="row mb-4">
+                <div class="col-lg-6">
+                    <div class="mb-3">
+                        <label for="Investor_Age" class="form-label">Investor Age</label>
+                        <input type="number" class="form-control" name="Investor_Age" id="Investor_Age" placeholder="Enter age" required>
+                        <div class="field-help">
+                            <i class="fas fa-info-circle"></i> Age helps our model understand demographic patterns in investment sentiment
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-6">
+                    <div class="mb-3">
+                        <label for="Investor_Gender" class="form-label">Investor Gender</label>
+                        <select class="form-select" name="Investor_Gender" id="Investor_Gender" required>
+                            <option value="">Select Gender</option>
+                            <option value="M">Male</option>
+                            <option value="F">Female</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row mb-4">
+                <div class="col-lg-6">
+                    <div class="mb-3">
+                        <label for="PDate" class="form-label">Prediction Date</label>
+                        <input type="date" class="form-control" name="PDate" id="PDate" required>
+                    </div>
+                </div>
+                
+                <div class="col-lg-6">
+                    <div class="mb-3">
+                        <label for="Stock_Name" class="form-label">Stock Name</label>
+                        <input type="text" class="form-control" name="Stock_Name" id="Stock_Name" placeholder="Enter stock ticker/symbol" required>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row mb-4">
+                <div class="col-lg-6">
+                    <div class="mb-3">
+                        <label for="Company_Name" class="form-label">Company Name</label>
+                        <input type="text" class="form-control" name="Company_Name" id="Company_Name" placeholder="Enter company name" required>
+                    </div>
+                </div>
+                
+                <div class="col-lg-6">
+                    <div class="mb-3">
+                        <label for="Stock_Text" class="form-label">Stock Description / Investor Comments</label>
+                        <textarea class="form-control" name="Stock_Text" id="Stock_Text" rows="5" placeholder="Enter stock description or investor comments" required></textarea>
+                        <div class="field-help">
+                            <i class="fas fa-info-circle"></i> Our sentiment analysis model processes this text to determine investor sentiment
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="text-center mt-4">
+                <button type="submit" name="submit" class="predict-btn">
+                    <i class="fas fa-chart-line"></i> Analyze Sentiment
+                </button>
+            </div>
+        </form>
+        
+        {% if objs %}
+        <div class="result-section">
+            <h4 class="result-section-title">Prediction Results</h4>
+            
+            <div class="row justify-content-center">
+                <div class="col-md-8 col-lg-6">
+                    <div class="result-card">
+                        <div class="result-icon">
+                            {% if objs == 'Positive' %}
+                                <i class="fas fa-smile"></i>
+                            {% elif objs == 'Negative' %}
+                                <i class="fas fa-frown"></i>
+                            {% elif objs == 'Neutral' %}
+                                <i class="fas fa-meh"></i>
+                            {% else %}
+                                <i class="fas fa-chart-pie"></i>
+                            {% endif %}
+                        </div>
+                        <div class="result-label">Predicted Investor Sentiment</div>
+                        <div class="result-value">{{ objs }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+    // Set today's date as default
+    document.addEventListener('DOMContentLoaded', function() {
+        const dateInput = document.getElementById('PDate');
+        if (dateInput) {
+            const today = new Date();
+            const year = today.getFullYear();
+            const month = String(today.getMonth() + 1).padStart(2, '0');
+            const day = String(today.getDate()).padStart(2, '0');
+            dateInput.value = `${year}-${month}-${day}`;
+        }
+    });
+</script>
+
+{% endblock %}
